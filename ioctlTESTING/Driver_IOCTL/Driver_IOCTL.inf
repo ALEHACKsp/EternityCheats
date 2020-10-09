@@ -1,0 +1,90 @@
+;
+; Driver_IOCTL.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample ; TODO: edit Class
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171} ; TODO: edit ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=Driver_IOCTL.cat
+DriverVer = 09/24/2020,13.15.27.228
+
+[DestinationDirs]
+DefaultDestDir = 12
+Driver_IOCTL_Device_CoInstaller_CopyFiles = 11
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+Driver_IOCTL.sys  = 1,,
+;
+
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NTamd64
+
+[Standard.NTamd64]
+%Driver_IOCTL.DeviceDesc%=Driver_IOCTL_Device, Root\Driver_IOCTL ; TODO: edit hw-id
+
+[Driver_IOCTL_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+Driver_IOCTL.sys
+
+;-------------- Service installation
+[Driver_IOCTL_Device.NT.Services]
+AddService = Driver_IOCTL,%SPSVCINST_ASSOCSERVICE%, Driver_IOCTL_Service_Inst
+
+; -------------- Driver_IOCTL driver install sections
+[Driver_IOCTL_Service_Inst]
+DisplayName    = %Driver_IOCTL.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\Driver_IOCTL.sys
+
+;
+;--- Driver_IOCTL_Device Coinstaller installation ------
+;
+
+[Driver_IOCTL_Device.NT.CoInstallers]
+AddReg=Driver_IOCTL_Device_CoInstaller_AddReg
+CopyFiles=Driver_IOCTL_Device_CoInstaller_CopyFiles
+
+[Driver_IOCTL_Device_CoInstaller_AddReg]
+;
+
+
+[Driver_IOCTL_Device_CoInstaller_CopyFiles]
+;
+
+
+[Driver_IOCTL_Device.NT.Wdf]
+KmdfService =  Driver_IOCTL, Driver_IOCTL_wdfsect
+[Driver_IOCTL_wdfsect]
+KmdfLibraryVersion = 1.15
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="aye" ;TODO: Replace with your manufacturer name
+ClassName="Samples" ; TODO: edit ClassName
+DiskName = "Driver_IOCTL Installation Disk"
+Driver_IOCTL.DeviceDesc = "Driver_IOCTL Device"
+Driver_IOCTL.SVCDESC = "Driver_IOCTL Service"
+
